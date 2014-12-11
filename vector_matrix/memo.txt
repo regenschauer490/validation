@@ -1,7 +1,9 @@
 
+要素数を動的に確保する（要素数が実行時にしか分からない）場合に使用するコンテナの性能比較．
+
 疎ベクトル同士の積のパフォーマンスを調べた事例として、[2]も参考になる。
 
-最も基本的な SGD(Stochastic gradient descent)により推定を行う Matrix Factorization を実装した[1]．
+最も基本的な SGD(Stochastic gradient descent)により推定を行う Nonnegative Matrix Factorization を実装した[1]．
 
 BLASで言うLevel1演算（vector同士の演算）のみで実装できるので、Matrixではなくstd::vector<Vector>で行列を表現する．
 

@@ -5,7 +5,7 @@
 template <class Matrix, class Vector = typename Matrix::value_type>
 class MatrixFactorization
 {
-	using Ratings = std::vector<std::vector<int>>;
+	using Ratings = std::vector<std::vector<uint>>;
 
 private:
 	uint const U_;	// number of users
@@ -20,6 +20,7 @@ private:
 	Matrix mat_u_;	// U * K
 	Matrix mat_v_;	// V * K
 
+	double error_;
 	sig::SimpleRandom<double> random_;
 
 private:
@@ -49,16 +50,18 @@ private:
 			}
 		}
 		if(DEBUG_MODE) std::cout << soe << std::endl;
+		
+		//bool local_conv = soe < error_;
+		error_ = soe;
 	}
 
 public:
 	template <class F>
-	MatrixFactorization(Ratings const& ratings, F const& init_mat_func, uint num_factor, double alpha = 0.01, double lambda = 0.01)
+	MatrixFactorization(Ratings const& ratings, F const& init_mat_func, uint num_factor, double alpha = 0.001, double lambda = 0.001)
 	:	U_(ratings.size()), V_(ratings[0].size()), K_(num_factor), alpha_(alpha), lambda_(lambda), ratings_(ratings),
 		mat_u_(init_mat_func(U_, K_)), mat_v_(init_mat_func(V_, K_)), random_(0, 1, DEBUG_MODE)
 	{
 		init(init_mat_func);
-		if (DEBUG_MODE) print_factor();
 	}
 
 	template <class F1, class F2>
@@ -66,12 +69,15 @@ public:
 		for (uint i = 0; i < iteration; ++i){
 			update(error_func, update_func);
 		}
-		if (DEBUG_MODE) print_factor();
 	}
 
 	template <class F>
 	double estimate(uint u, uint v, F const& inner_prod) const{
 		return inner_prod(mat_u_[u], mat_v_[v]);
+	}
+
+	double error() const {
+		return error_;
 	}
 
 	void print_factor() const{
