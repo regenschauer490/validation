@@ -120,7 +120,7 @@ void vector_random_access_exp()
 			time[2][n] = random_access_exp(eigen, [](EigenVec const& v, uint i) { return v.coeff(i); }, iteration);
 			time[3][n] = random_access_exp(eigen_sparse, [](EigenSparseVec const& v, uint i) { return v.coeff(i); }, iteration);
 			time[4][n] = random_access_exp(ublas, [](UblasVec const& v, uint i) { return v[i]; }, iteration);
-			time[5][n] = random_access_exp(ublas_map, [](UblasVec const& v, uint i) { return v[i]; }, iteration);	// too slow
+			time[5][n] = random_access_exp(ublas_map, [](UblasMapVec const& v, uint i) { return v[i]; }, iteration);	// too slow
 			time[6][n] = random_access_exp(ublas_comp, [](UblasCompVec const& v, uint i) { return v[i]; }, iteration);
 			time[7][n] = random_access_exp(ublas_coord, [](UblasCoordVec const& v, uint i) { return v[i]; }, iteration);
 		}
@@ -413,64 +413,6 @@ void matrix_prod_exp()
 	matrix_exp_impl(func, print_func, ofs, average, num_element, 0.9);
 }
 
-void matrix_LU_decomposition_exp()
-{
-	const uint num_element = 100;
-	const uint average = 100;
-	const std::string result_pass = "./matrix_LU_decomposition_exp.txt";
-
-	using namespace boost::numeric;
-
-	auto func = [&](
-		sig::array<std::vector<int64_t>, 6>& time,
-		EigenMat& eigen,
-		EigenSparseMat& eigen_sparse,
-		UblasMat& ublas,
-		UblasMapMat& ublas_map,
-		UblasCompMat& ublas_comp,
-		UblasCoordMat& ublas_coord
-		)
-	{
-		for (uint n = 0; n < average; ++n) {
-			std::cout << n << std::endl;
-			time[0][n] = lu_exp(eigen, [](EigenMat const& m) {
-				auto lu = m.partialPivLu();
-			});
-			time[1][n] = lu_exp(eigen_sparse, [](EigenSparseMat const& m) {
-				Eigen::SparseLU<EigenSparseMat> splu;
-				splu.analyzePattern(m);
-				splu.factorize(m);
-			});
-			time[2][n] = lu_exp(ublas, [](UblasMat& m) {
-				ublas::lu_factorize(m);
-				auto L = ublas::triangular_adaptor<UblasMat, ublas::unit_lower>(m);
-				auto U = ublas::triangular_adaptor<UblasMat, ublas::upper>(m);
-			});
-			/*time[3][n] = lu_exp(ublas_map, [](UblasMapMat const& m) {
-				ublas::lu_factorize(m);
-			});
-			time[4][n] = lu_exp(ublas_comp, [](UblasCompMat const& m) {
-				ublas::lu_factorize(m);
-			});
-			time[5][n] = mprod_exp(ublas_coord, [](UblasCoordMat const& m) {
-				ublas::lu_factorize(m);
-			});*/
-		}
-	};
-
-	std::cout << "matrix_LU_decomposition_exp" << std::endl;
-
-	auto print_func = [](std::ofstream& ofs, uint average, uint num_element, double sparseness) {
-		ofs << "\n matrix_LU_decomposition_exp time (ns)" << std::endl;
-		ofs << "sparseness: " << sparseness << ", number of element: " << num_element << ", average: " << average << std::endl;
-	};
-
-	std::ofstream ofs(result_pass, std::ios::app);
-	matrix_exp_impl(func, print_func, ofs, average, num_element, 0.1);
-	matrix_exp_impl(func, print_func, ofs, average, num_element, 0.9);
-}
-
-
 /*
 void matrix_factorization_exp()
 {
@@ -534,13 +476,13 @@ int main()
 {
 	//test();
 	
-	//vector_random_access_exp();
-	//vector_iteration_exp();
-	//vector_inner_prod_exp();
+	vector_random_access_exp();
+	vector_iteration_exp();
+	vector_inner_prod_exp();
 
-	//matrix_random_access_exp();
-	//matrix_prod_exp();
-	matrix_LU_decomposition_exp();
+	matrix_random_access_exp();
+	matrix_prod_exp();
+	//matrix_LU_decomposition_exp();
 
 	//matrix_factorization_exp();
 
