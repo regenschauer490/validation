@@ -160,36 +160,44 @@ void vector_iteration_exp()
 			std::cout << n << std::endl;
 			time[0][n] = iteration_exp(stl, [](std::vector<double> const& v) {
 				double d = 0;
-				for(auto const& e : v) d += e; 
+				for(auto const& e : v) d += e;
+				return d;
 			});
 			time[1][n] = iteration_exp(stl_val, [](std::valarray<double> const& v) {
 				double d = 0;
 				for(auto const& e : v) d += e; 
+				return d;
 			});
 			time[2][n] = iteration_exp(eigen, [](EigenVec const& v) {
 				double d = 0;
 				for (uint i = 0; i < v.size(); ++i) d += v[i];
+				return d;
 			});
 			time[3][n] = iteration_exp(eigen_sparse, [](EigenSparseVec const& v) {
 				double d = 0;
 				EigenSparseVec::InnerIterator it(v);
 				for (; it; ++it) d += it.value();
+				return d;
 			});
 			time[4][n] = iteration_exp(ublas, [](UblasVec const& v) {
 				double d = 0;
 				for (auto const& e : v) d += e;
+				return d;
 			});
 			time[5][n] = iteration_exp(ublas_map, [](UblasVec const& v) {
 				double d = 0;
 				for (auto const& e : v) d += e;
+				return d;
 			});
 			time[6][n] = iteration_exp(ublas_comp, [](UblasCompVec const& v) {
 				double d = 0;
 				for (auto const& e : v) d += e;
+				return d;
 			});
 			time[7][n] = iteration_exp(ublas_coord, [](UblasCoordVec const& v) {
 				double d = 0;
 				for (auto const& e : v) d += e;
+				return d;
 			});
 		}
 	};
@@ -209,6 +217,7 @@ void vector_iteration_exp()
 void vector_inner_prod_exp()
 {
 	const uint num_element = 100000;
+	const uint iteration = 1;
 	const uint average = 100;
 	const std::string result_pass = "./vector_inner_prod_exp.txt";
 
@@ -228,37 +237,45 @@ void vector_inner_prod_exp()
 	{
 		for (uint n = 0; n < average; ++n) {
 			std::cout << n << std::endl;
-			time[0][n] = iteration_exp(stl, [](std::vector<double> const& v) {
+			time[0][n] = inner_prod_exp(stl, [](std::vector<double> const& v) {
 				double d = 0;
 				for (uint i = 0; i < v.size(); ++i) d += (v[i] * v[i]);
 				//using sig::operator*;
 				//d = v * v;
-			});
-			time[1][n] = iteration_exp(stl_val, [](std::valarray<double> const& v) {
+				return d;
+			}, iteration);
+			time[1][n] = inner_prod_exp(stl_val, [](std::valarray<double> const& v) {
 				double d = 0;
 				for (uint i = 0; i < v.size(); ++i) d += v[i] * v[i];
 				//double d = (v * v).sum();
-			});
+				return d;
+			}, iteration);
 			time[2][n] = iteration_exp(eigen, [](EigenVec const& v) {
 				double d = v.dot(v);
+				return d;
 			});
-			time[3][n] = iteration_exp(eigen_sparse, [](EigenSparseVec const& v) {
+			time[3][n] = inner_prod_exp(eigen_sparse, [](EigenSparseVec const& v) {
 				double d = 0;
 				EigenSparseVec::InnerIterator it(v);
 				for (; it; ++it) d += it.value();
-			});
-			time[4][n] = iteration_exp(ublas, [](UblasVec const& v) {
+				return d;
+			}, iteration);
+			time[4][n] = inner_prod_exp(ublas, [](UblasVec const& v) {
 				double d = inner_prod(v, v);
-			});
-			time[5][n] = iteration_exp(ublas_map, [](UblasVec const& v) {
+				return d;
+			}, iteration);
+			time[5][n] = inner_prod_exp(ublas_map, [](UblasVec const& v) {
 				double d = inner_prod(v, v);
-			});
-			time[6][n] = iteration_exp(ublas_comp, [](UblasCompVec const& v) {
+				return d;
+			}, iteration);
+			time[6][n] = inner_prod_exp(ublas_comp, [](UblasCompVec const& v) {
 				double d = inner_prod(v, v);
-			});
-			time[7][n] = iteration_exp(ublas_coord, [](UblasCoordVec const& v) {
+				return d;
+			}, iteration);
+			time[7][n] = inner_prod_exp(ublas_coord, [](UblasCoordVec const& v) {
 				double d = inner_prod(v, v);
-			});
+				return d;
+			}, iteration);
 		}
 	};
 
@@ -413,78 +430,65 @@ void matrix_prod_exp()
 	matrix_exp_impl(func, print_func, ofs, average, num_element, 0.9);
 }
 
-/*
-void matrix_factorization_exp()
+#if !(defined(_WIN32) || defined(_WIN64))
+void matrix_LU_decomposition_exp()
 {
 	const uint num_element = 100;
-	const uint num_factor = std::sqrt(num_element);
-	const double sparseness = 0.8;
-	const uint iteration = 500;
 	const uint average = 100;
-	const std::string result_pass = "./matrix_factorization_exp.txt";
+	const std::string result_pass = "./matrix_LU_decomposition_exp.txt";
 
-	auto sparse_ratings = make_matrix<uint>(num_element, num_element, 1, 5, sparseness);
+	using namespace boost::numeric;
 
-	sig::array<std::vector<int64_t>, 2> time(2, std::vector<int64_t>(average));
+	auto func = [&](
+		sig::array<std::vector<int64_t>, 6>& time,
+		EigenMat& eigen,
+		EigenSparseMat& eigen_sparse,
+		UblasMat& ublas,
+		UblasMapMat& ublas_map,
+		UblasCompMat& ublas_comp,
+		UblasCoordMat& ublas_coord
+		)
+	{
+		for (uint n = 0; n < average; ++n) {
+			std::cout << n << std::endl;
+			time[0][n] = lu_exp(eigen, [](EigenMat const& m) {
+				auto lu = m.partialPivLu();
+			});
+			time[1][n] = lu_exp(eigen_sparse, [](EigenSparseMat const& m) {
+				Eigen::SparseLU<EigenSparseMat> splu;
+				splu.analyzePattern(m);
+				splu.factorize(m);
+			});
+			time[2][n] = lu_exp(ublas, [](UblasMat& m) {
+				ublas::lu_factorize(m);
+				auto L = ublas::triangular_adaptor<UblasMat, ublas::unit_lower>(m);
+				auto U = ublas::triangular_adaptor<UblasMat, ublas::upper>(m);
+			});
+		}
+	};
 
-	for (uint n = 0; n < average; ++n) {
-		time[0][n] = eigen_mf(sparse_ratings, num_factor, iteration);
-	}
+	std::cout << "matrix_LU_decomposition_exp" << std::endl;
+
+	auto print_func = [](std::ofstream& ofs, uint average, uint num_element, double sparseness) {
+		ofs << "\n matrix_LU_decomposition_exp time (ns)" << std::endl;
+		ofs << "sparseness: " << sparseness << ", number of element: " << num_element << ", average: " << average << std::endl;
+	};
 
 	std::ofstream ofs(result_pass, std::ios::app);
-	ofs << "\n matrix_factorization_exp time (ms)" << std::endl;
-	ofs << "sparseness: " << sparseness << ", iteration: " << iteration << ", average: " << average << std::endl;
-	ofs << "eigen matrix:\t" << sig::average(time[0]) << "(" << std::sqrt(sig::variance(time[0])) << ")" << std::endl;
-	ofs << "eigen sparse_matrix:\t" << sig::average(time[1]) << "(" << std::sqrt(sig::variance(time[1])) << ")" << std::endl;
+	matrix_exp_impl(func, print_func, ofs, average, num_element, 0.1);
+	matrix_exp_impl(func, print_func, ofs, average, num_element, 0.9);
 }
-*/
-
-void test() {
-	const uint V_ = 10;
-	const uint K_ = 5;
-	Eigen::MatrixXd beta_ = Eigen::MatrixXd::Zero(K_, V_);
-	std::cout << beta_ << std::endl;
-
-		for (uint k = 0; k < K_; ++k) {
-			auto beta_v = beta_.row(k);
-			for (uint v = 0; v < V_; ++v) {
-				beta_v.coeffRef(v) = k * v;
-			}
-		}
-
-	std::cout << std::endl << beta_.coeff(1,2) << std::endl;
-
-	std::cout << std::endl;
-	std::cout << beta_ << std::endl;
-
-	EigenSparseVec es(10);
-	es.insertBack(1) = 1;
-	es.insertBack(3) = 3;
-	es.insertBack(10) = 10;
-
-	double t1 = es.coeff(1);
-	double t2 = es.coeff(2);
-	double t3 = es.coeff(3);
-
-	EigenSparseVec::InnerIterator it(es);
-	for (; it; ++it) {
-		std::cout << "row:" << it.row() << " col:" << it.col() << " index:" << it.index() << " value:" << it.value() << std::endl;
-	}
-}
+#endif
 
 int main()
 {
-	//test();
-	
 	vector_random_access_exp();
 	vector_iteration_exp();
 	vector_inner_prod_exp();
 
 	matrix_random_access_exp();
 	matrix_prod_exp();
-	//matrix_LU_decomposition_exp();
-
-	//matrix_factorization_exp();
-
+	matrix_LU_decomposition_exp();
+	
 	return 0;
 }
