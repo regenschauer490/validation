@@ -46,27 +46,3 @@ void eigen_sparse_mf(std::vector<std::vector<int>> const& ratings, uint num_fact
 }
 
 
-void matrix_factorization_exp()
-{
-	const uint num_element = 100;
-	const uint num_factor = std::sqrt(num_element);
-	const double sparseness = 0.8;
-	const uint iteration = 500;
-	const uint average = 100;
-	const std::string result_pass = "./matrix_factorization_exp.txt";
-
-	auto sparse_ratings = make_matrix<uint>(num_element, num_element, 1, 5, sparseness);
-
-	sig::array<std::vector<int64_t>, 2> time(2, std::vector<int64_t>(average));
-
-	for (uint n = 0; n < average; ++n) {
-		time[0][n] = eigen_mf(sparse_ratings, num_factor, iteration);
-	}
-
-	std::ofstream ofs(result_pass, std::ios::app);
-	ofs << "\n matrix_factorization_exp time (ms)" << std::endl;
-	ofs << "sparseness: " << sparseness << ", iteration: " << iteration << ", average: " << average << std::endl;
-	ofs << "eigen matrix:\t" << sig::average(time[0]) << "(" << std::sqrt(sig::variance(time[0])) << ")" << std::endl;
-	ofs << "eigen sparse_matrix:\t" << sig::average(time[1]) << "(" << std::sqrt(sig::variance(time[1])) << ")" << std::endl;
-}
-
