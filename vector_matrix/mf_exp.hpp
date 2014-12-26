@@ -22,7 +22,7 @@ auto eigen_mf(std::vector<std::vector<uint>> const& ratings, uint num_factor, ui
 		return lf1.dot(lf2);
 	};
 
-	if (DEBUG_MODE) {
+	if (MF_DEBUG_MODE) {
 		std::cout << "\n eigen_mf estimate" << std::endl;
 		for (uint u = 0; u < ratings.size(); ++u) {
 			for (uint v = 0; v < ratings[0].size(); ++v) {
@@ -44,5 +44,4 @@ void eigen_sparse_mf(std::vector<std::vector<int>> const& ratings, uint num_fact
 
 
 }
-
 

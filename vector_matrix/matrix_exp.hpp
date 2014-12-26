@@ -2,6 +2,8 @@
 
 #include "setting.hpp"
 
+namespace ac2014
+{
 template <class M, class F>
 auto random_access_exp(M const& mat, uint size1, uint size2, F const& func, uint num_iteration)
 {
@@ -38,4 +40,6 @@ auto lu_exp(M const& mat, F const& func)
 	tw.save();
 
 	return tw.get_total_time<std::chrono::microseconds>();
+}
+
 }

@@ -13,6 +13,8 @@
 #include <boost/numeric/ublas/lu.hpp>
 #include <boost/numeric/ublas/triangular.hpp>
 
+namespace ac2014
+{
 template <class T>
 auto make_vector(uint num_element, T value_min, T value_max, double sparseness)
 {
@@ -480,6 +482,8 @@ void matrix_LU_decomposition_exp()
 }
 #endif
 
+}
+
 /*
 void matrix_factorization_exp()
 {
@@ -509,6 +513,8 @@ void matrix_factorization_exp()
 
 int main()
 {
+	using namespace ac2014;
+
 	vector_random_access_exp();
 	vector_iteration_exp();
 	vector_inner_prod_exp();

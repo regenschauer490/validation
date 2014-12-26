@@ -2,6 +2,8 @@
 
 #include "setting.hpp"
 
+namespace ac2014
+{
 template <class V, class F>
 auto random_access_exp(V const& vec, F const& func, uint num_iteration)
 {
@@ -45,4 +47,6 @@ auto inner_prod_exp(V const& vec, F const& func, uint num_iteration)
 	tw.save();
 
 	return tw.get_total_time<std::chrono::nanoseconds>();
+}
+
 }

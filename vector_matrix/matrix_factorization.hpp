@@ -1,6 +1,10 @@
 ﻿#pragma once
 
-#include "setting.hpp"
+#include "SigUtil/lib/tools/random.hpp"
+#include "SigUtil/lib/tools/time_watch.hpp"
+
+using sig::uint;
+const bool MF_DEBUG_MODE = 0;
 
 template <class Matrix, class Vector = typename Matrix::value_type>
 class MatrixFactorization
@@ -49,7 +53,7 @@ private:
 				update_func(mat_v_[v], mat_u_[u], error, alpha_, lambda_);
 			}
 		}
-		if(DEBUG_MODE) std::cout << soe << std::endl;
+		if(MF_DEBUG_MODE) std::cout << soe << std::endl;
 		
 		//bool local_conv = soe < error_;
 		error_ = soe;
@@ -59,7 +63,7 @@ public:
 	template <class F>
 	MatrixFactorization(Ratings const& ratings, F const& init_mat_func, uint num_factor, double alpha = 0.001, double lambda = 0.001)
 	:	U_(ratings.size()), V_(ratings[0].size()), K_(num_factor), alpha_(alpha), lambda_(lambda), ratings_(ratings),
-		mat_u_(init_mat_func(U_, K_)), mat_v_(init_mat_func(V_, K_)), random_(0, 1, DEBUG_MODE)
+		mat_u_(init_mat_func(U_, K_)), mat_v_(init_mat_func(V_, K_)), random_(0, 1, MF_DEBUG_MODE)
 	{
 		init(init_mat_func);
 	}
