@@ -12,7 +12,9 @@
 
 namespace ac2014
 {
+#if SIG_MSVC_ENV
 using sig::uint;
+#endif
 
 const bool DEBUG_MODE = 0;
 }
