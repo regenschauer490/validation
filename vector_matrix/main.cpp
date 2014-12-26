@@ -140,7 +140,7 @@ void vector_random_access_exp()
 
 void vector_iteration_exp()
 {
-	const uint num_element = 100000;
+	const uint num_element = 1000000;
 	const uint average = 100;
 	const std::string result_pass = "./vector_iteration_exp.txt";
 
@@ -184,7 +184,7 @@ void vector_iteration_exp()
 				for (auto const& e : v) d += e;
 				return d;
 			});
-			time[5][n] = iteration_exp(ublas_map, [](UblasVec const& v) {
+			/*time[5][n] = iteration_exp(ublas_map, [](UblasMapVec const& v) {
 				double d = 0;
 				for (auto const& e : v) d += e;
 				return d;
@@ -198,7 +198,7 @@ void vector_iteration_exp()
 				double d = 0;
 				for (auto const& e : v) d += e;
 				return d;
-			});
+			});*/
 		}
 	};
 
@@ -216,7 +216,7 @@ void vector_iteration_exp()
 
 void vector_inner_prod_exp()
 {
-	const uint num_element = 100000;
+	const uint num_element = 1000000;
 	const uint iteration = 1;
 	const uint average = 100;
 	const std::string result_pass = "./vector_inner_prod_exp.txt";
@@ -264,7 +264,7 @@ void vector_inner_prod_exp()
 				double d = inner_prod(v, v);
 				return d;
 			}, iteration);
-			time[5][n] = inner_prod_exp(ublas_map, [](UblasVec const& v) {
+			/*time[5][n] = inner_prod_exp(ublas_map, [](UblasMapVec const& v) {
 				double d = inner_prod(v, v);
 				return d;
 			}, iteration);
@@ -275,7 +275,7 @@ void vector_inner_prod_exp()
 			time[7][n] = inner_prod_exp(ublas_coord, [](UblasCoordVec const& v) {
 				double d = inner_prod(v, v);
 				return d;
-			}, iteration);
+			}, iteration);*/
 		}
 	};
 
@@ -359,7 +359,7 @@ void matrix_random_access_exp()
 			time[0][n] = random_access_exp(eigen, ne, ne, [](EigenMat const& m, uint i, uint j) { return m.coeff(i, j); }, iteration);
 			time[1][n] = random_access_exp(eigen_sparse, ne, ne, [](EigenSparseMat const& m, uint i, uint j) { return m.coeff(i, j); }, iteration);
 			time[2][n] = random_access_exp(ublas, ne, ne, [](UblasMat const& m, uint i, uint j) { return m(i, j); }, iteration);
-			time[3][n] = random_access_exp(ublas_map, ne, ne, [](UblasMat const& m, uint i, uint j) { return m(i, j); }, iteration);	// too slow
+			time[3][n] = random_access_exp(ublas_map, ne, ne, [](UblasMapMat const& m, uint i, uint j) { return m(i, j); }, iteration);	// too slow
 			time[4][n] = random_access_exp(ublas_comp, ne, ne, [](UblasCompMat const& m, uint i, uint j) { return m(i, j); }, iteration);
 			time[5][n] = random_access_exp(ublas_coord, ne, ne, [](UblasCoordMat const& m, uint i, uint j) { return m(i, j); }, iteration);
 		}
