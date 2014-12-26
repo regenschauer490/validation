@@ -141,7 +141,7 @@ void vector_random_access_exp()
 
 void vector_iteration_exp()
 {
-	const uint num_element = 1000000;
+	const uint num_element = 100000;
 	const uint average = 100;
 	const std::string result_pass = "./vector_iteration_exp.txt";
 
@@ -185,7 +185,7 @@ void vector_iteration_exp()
 				for (auto const& e : v) d += e;
 				return d;
 			});
-			/*time[5][n] = iteration_exp(ublas_map, [](UblasMapVec const& v) {
+			time[5][n] = iteration_exp(ublas_map, [](UblasMapVec const& v) {
 				double d = 0;
 				for (auto const& e : v) d += e;
 				return d;
@@ -199,7 +199,7 @@ void vector_iteration_exp()
 				double d = 0;
 				for (auto const& e : v) d += e;
 				return d;
-			});*/
+			});
 		}
 	};
 
@@ -217,7 +217,7 @@ void vector_iteration_exp()
 
 void vector_inner_prod_exp()
 {
-	const uint num_element = 1000000;
+	const uint num_element = 100000;
 	const uint iteration = 1;
 	const uint average = 100;
 	const std::string result_pass = "./vector_inner_prod_exp.txt";
@@ -265,7 +265,7 @@ void vector_inner_prod_exp()
 				double d = inner_prod(v, v);
 				return d;
 			}, iteration);
-			/*time[5][n] = inner_prod_exp(ublas_map, [](UblasMapVec const& v) {
+			time[5][n] = inner_prod_exp(ublas_map, [](UblasMapVec const& v) {
 				double d = inner_prod(v, v);
 				return d;
 			}, iteration);
@@ -276,7 +276,7 @@ void vector_inner_prod_exp()
 			time[7][n] = inner_prod_exp(ublas_coord, [](UblasCoordVec const& v) {
 				double d = inner_prod(v, v);
 				return d;
-			}, iteration);*/
+			}, iteration);
 		}
 	};
 
