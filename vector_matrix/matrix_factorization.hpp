@@ -80,16 +80,18 @@ public:
 		return error_;
 	}
 
-	void print_factor() const{
-		std::cout << "\n u" << std::endl;
-		for (uint u = 0; u < U_; ++u){
-			for (uint k = 0; k < K_; ++k) std::cout << mat_u_[u][k] << " ";
-			std::cout << std::endl;
+	template <class S>
+	void print_factor_u(S& stream) const {
+		for (uint u = 0; u < U_; ++u) {
+			for (uint k = 0; k < K_; ++k) stream << mat_u_[u][k] << " ";
+			stream << std::endl;
 		}
-		std::cout << "\n v" << std::endl;
+	}
+	template <class S>
+	void print_factor_v(S& stream) const {
 		for (uint v = 0; v < V_; ++v){
-			for (uint k = 0; k < K_; ++k) std::cout << mat_v_[v][k] << " ";
-			std::cout << std::endl;
+			for (uint k = 0; k < K_; ++k) stream << mat_v_[v][k] << " ";
+			stream << std::endl;
 		}
 	}
 };
